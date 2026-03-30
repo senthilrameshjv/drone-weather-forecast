@@ -2,12 +2,14 @@ import { useState } from 'react'
 import type { LocationName, SearchResult } from './api/geocoding'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useWeather } from './hooks/useWeather'
+import { useAirspace } from './hooks/useAirspace'
 import { useGoNoGo } from './hooks/useGoNoGo'
 import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
 import { GoNoGoBadge } from './components/gonogo/GoNoGoBadge'
 import { ScoreBreakdown } from './components/gonogo/ScoreBreakdown'
 import { CurrentConditions } from './components/current/CurrentConditions'
+import { AirspaceStatusCard } from './components/airspace/AirspaceStatusCard'
 import { HourlyForecast } from './components/hourly/HourlyForecast'
 import { DailyForecast } from './components/daily/DailyForecast'
 import { LoadingSpinner } from './components/shared/LoadingSpinner'
@@ -24,6 +26,7 @@ function App() {
   const resolvedLocationSource = manualCoords ? 'manual' : locationSource
 
   const { data, locationName, loading: weatherLoading, error: weatherError } = useWeather(resolvedCoords)
+  const { assessment: airspaceAssessment, loading: airspaceLoading, error: airspaceError } = useAirspace(resolvedCoords)
   const resolvedLocationName = manualLocationName ?? locationName
   const { current: currentGoNoGo, hourly, daily } = useGoNoGo(data)
 
@@ -118,6 +121,13 @@ function App() {
 
             {/* Current Conditions */}
             <CurrentConditions current={data.current} />
+
+            {/* Airspace Awareness */}
+            <AirspaceStatusCard
+              assessment={airspaceAssessment}
+              loading={airspaceLoading}
+              error={airspaceError}
+            />
 
             {/* Hourly Forecast */}
             {hourly.length > 0 && <HourlyForecast slots={hourly.slice(0, 48)} />}
