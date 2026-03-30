@@ -10,6 +10,7 @@ Build a web app that helps drone pilots decide if flying conditions are safe at 
 - **Tailwind CSS** — utility-first, mobile-first styling
 - **Open-Meteo API** — free, no API key, covers current + hourly + daily weather
 - **Nominatim (OpenStreetMap)** — free reverse geocoding for location name display
+- **`vite-plugin-mkcert`** — HTTPS on the dev server via locally-trusted cert (required for geolocation on Firefox/Safari; no browser warnings after first run)
 - No backend needed — pure frontend hitting public APIs
 
 ---
@@ -120,6 +121,39 @@ Current Conditions  [Wind] [Gust] [Rain] [Clouds] [Humidity] [Temp]
   Today    ⛅ 72°/55°F  Wind 14mph  🟢 GO
   Tomorrow 🌧 65°/50°F  Wind 22mph  🔴 NO-GO
 ```
+
+---
+
+## Cross-Browser / Mobile Access
+
+### Why HTTPS is required
+Firefox and Safari (desktop and mobile) block the Geolocation API over plain HTTP on any non-`localhost` address. This means accessing the app via a local network IP (`192.168.x.x`) fails silently or shows a permission error.
+
+Chrome is the only browser that allows geolocation over plain HTTP on local network addresses.
+
+### Solution: `vite-plugin-mkcert`
+Added to `vite.config.ts`. Uses `mkcert` to generate a **locally-trusted** certificate signed by a root CA that is installed into the system trust store (and Firefox's NSS store via the `nss` brew package). Unlike self-signed certs, this produces **zero browser warnings** in Chrome, Firefox, and Safari after the one-time setup.
+
+**One-time setup (already done on this machine):**
+```bash
+brew install mkcert nss   # nss enables Firefox trust store support
+```
+On first `npm run dev`, mkcert will prompt for your Mac password to install the root CA. After that, all browsers trust the cert permanently.
+
+### Accessing from mobile (all browsers)
+1. Run `npm run dev`
+2. Note the `Network:` URL printed (e.g. `https://192.168.0.143:3000`)
+3. Open that URL on your phone — both Mac and phone must be on the **same Wi-Fi**
+4. Accept the self-signed certificate warning (tap "Advanced → Proceed")
+5. Allow location permission when prompted
+
+### Browser compatibility matrix
+| Browser | localhost | Local network IP (HTTP) | Local network IP (HTTPS) |
+|---|---|---|---|
+| Chrome (desktop/Android) | ✅ | ✅ | ✅ |
+| Firefox (desktop/Android) | ✅ | ❌ blocked | ✅ with cert warning |
+| Safari (iOS/macOS) | ✅ | ❌ blocked | ✅ with cert warning |
+| Zen (Firefox-based) | ✅ | ❌ blocked | ✅ with cert warning |
 
 ---
 

@@ -14,7 +14,7 @@ import { getWmoInfo } from './utils/wmoCode'
 import { formatDate } from './utils/formatters'
 
 function App() {
-  const { coords, error: geoError, loading: geoLoading, requestLocation } = useGeolocation()
+  const { coords, source: locationSource, error: geoError, loading: geoLoading, requestLocation } = useGeolocation()
   const { data, locationName, loading: weatherLoading, error: weatherError } = useWeather(coords)
   const { current: currentGoNoGo, hourly, daily } = useGoNoGo(data)
 
@@ -25,6 +25,7 @@ function App() {
     <div className="min-h-screen bg-gray-950 flex flex-col">
       <Header
         locationName={locationName}
+        locationSource={locationSource}
         locationLoading={geoLoading}
         locationError={geoError}
         onDetectLocation={requestLocation}

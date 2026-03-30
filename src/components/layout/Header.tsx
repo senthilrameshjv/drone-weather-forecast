@@ -1,14 +1,16 @@
 import type { LocationName } from '../../api/geocoding'
+import type { LocationSource } from '../../hooks/useGeolocation'
 import { LocationBar } from '../location/LocationBar'
 
 interface HeaderProps {
   locationName: LocationName | null
+  locationSource: LocationSource | null
   locationLoading: boolean
   locationError: string | null
   onDetectLocation: () => void
 }
 
-export function Header({ locationName, locationLoading, locationError, onDetectLocation }: HeaderProps) {
+export function Header({ locationName, locationSource, locationLoading, locationError, onDetectLocation }: HeaderProps) {
   return (
     <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 sticky top-0 z-10">
       <div className="max-w-2xl mx-auto space-y-2">
@@ -19,6 +21,7 @@ export function Header({ locationName, locationLoading, locationError, onDetectL
         </div>
         <LocationBar
           locationName={locationName}
+          locationSource={locationSource}
           loading={locationLoading}
           error={locationError}
           onDetect={onDetectLocation}
