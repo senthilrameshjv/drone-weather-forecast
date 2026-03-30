@@ -19,15 +19,21 @@ const badgeLabel: Record<GoNoGoVerdict, string> = {
 
 interface DayRowProps {
   day: DayForecast
+  isExpanded: boolean
+  onClick: () => void
 }
 
-export function DayRow({ day }: DayRowProps) {
+export function DayRow({ day, isExpanded, onClick }: DayRowProps) {
   const verdict = day.goNoGo.verdict
   const maxF = celsiusToFahrenheit(day.temperature_2m_max)
   const minF = celsiusToFahrenheit(day.temperature_2m_min)
 
   return (
-    <div className="flex items-center gap-3 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3">
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center gap-3 rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-left transition-colors hover:bg-gray-750"
+    >
       <div className="w-24 flex-shrink-0">
         <span className="text-sm font-medium text-white">{formatDay(day.time)}</span>
       </div>
@@ -46,6 +52,9 @@ export function DayRow({ day }: DayRowProps) {
       <span className={`flex-shrink-0 text-xs font-bold px-2 py-0.5 rounded-full border ${badgeStyle[verdict]}`}>
         {badgeLabel[verdict]}
       </span>
-    </div>
+      <span className={`flex-shrink-0 text-sm text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+        ▼
+      </span>
+    </button>
   )
 }

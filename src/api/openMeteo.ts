@@ -24,7 +24,7 @@ function buildUrl(lat: number, lon: number): string {
     wind_speed_unit: 'mph',
     timezone: 'auto',
     forecast_days: '7',
-    forecast_hours: '48',
+    forecast_hours: '168',
   })
   return `https://api.open-meteo.com/v1/forecast?${params.toString()}`
 }

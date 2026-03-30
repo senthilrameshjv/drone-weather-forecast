@@ -1,4 +1,4 @@
-import type { LocationName } from '../../api/geocoding'
+import type { LocationName, SearchResult } from '../../api/geocoding'
 import type { LocationSource } from '../../hooks/useGeolocation'
 import { LocationBar } from '../location/LocationBar'
 
@@ -8,9 +8,17 @@ interface HeaderProps {
   locationLoading: boolean
   locationError: string | null
   onDetectLocation: () => void
+  onManualSelect: (result: SearchResult) => void
 }
 
-export function Header({ locationName, locationSource, locationLoading, locationError, onDetectLocation }: HeaderProps) {
+export function Header({
+  locationName,
+  locationSource,
+  locationLoading,
+  locationError,
+  onDetectLocation,
+  onManualSelect,
+}: HeaderProps) {
   return (
     <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 sticky top-0 z-10">
       <div className="max-w-2xl mx-auto space-y-2">
@@ -25,6 +33,7 @@ export function Header({ locationName, locationSource, locationLoading, location
           loading={locationLoading}
           error={locationError}
           onDetect={onDetectLocation}
+          onManualSelect={onManualSelect}
         />
       </div>
     </header>

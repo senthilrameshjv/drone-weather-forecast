@@ -30,12 +30,16 @@ export function useWeather(coords: Coords | null): WeatherState {
     const key = `${coords.lat.toFixed(4)},${coords.lon.toFixed(4)}`
     const cached = cache.get(key)
     if (cached && Date.now() - cached.ts < CACHE_TTL) {
-      setState({ data: cached.data, locationName: cached.locationName, loading: false, error: null })
+      queueMicrotask(() => {
+        setState({ data: cached.data, locationName: cached.locationName, loading: false, error: null })
+      })
       return
     }
 
     abortRef.current?.abort()
-    setState(prev => ({ ...prev, loading: true, error: null }))
+    queueMicrotask(() => {
+      setState(prev => ({ ...prev, loading: true, error: null }))
+    })
 
     Promise.all([
       fetchWeather(coords.lat, coords.lon),
@@ -49,7 +53,7 @@ export function useWeather(coords: Coords | null): WeatherState {
         if (err.name === 'AbortError') return
         setState(prev => ({ ...prev, loading: false, error: err.message }))
       })
-  }, [coords?.lat, coords?.lon])
+  }, [coords])
 
   return state
 }
